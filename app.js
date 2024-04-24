@@ -2,19 +2,30 @@ const express = require('express');
 const bodyParser = require('body-parser'); // Import body-parser
 const app = express();
 const port = 3000;
-const {findMyCity} =require('./main.js')
 
 app.use(bodyParser.json()); // Apply body-parser middleware
 
+
+// app.post('/webhook', (req,res) => {
+//   const payload =req.body;
+//   const userLocation = payload.userLocation;
+//   res.send("");
+
+// })
+
 // Define the route for the webhook (using a POST method)
-app.post('/webhook',findMyCity, (req, res) => {
-      
+
+app.post('/webhook', (req, res) => {
+
+  // const newcity=localStorage.getItem("nameofcity")
+  
   // Access the request body (now parsed as JSON)
   const payload = req.body;
-  // const city= req.cityname;
-  const session= payload.sessionInfo.session
+  const session= payload.sessionInfo.session;
+  const userLocation = payload.userLocation;
+  console.log("request body is: ", userLocation);
   
-  console.log("request body is:", payload);
+  
   
   // Respond with a success message (optional)
   const fullfilment= {
@@ -23,7 +34,7 @@ app.post('/webhook',findMyCity, (req, res) => {
             {
                 "text": {
                     "text": [
-                        `Response from webhook ${req.city}`] 
+                        `Response from webhook ${userLocation}`] 
                 }
             }
         ]
@@ -31,12 +42,12 @@ app.post('/webhook',findMyCity, (req, res) => {
     "session_info": {
       "session": session,
       "parameters": {
-          "user_location": city
+          "user_location": userLocation
       }
   }
 }
-
-  res.send(fullfilment);
+res.json({message:"it is "})
+  // res.send(fullfilment);
 });
 
 // Start the server and listen for requests
